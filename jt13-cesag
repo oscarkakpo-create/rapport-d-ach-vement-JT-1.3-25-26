@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapport d'Achèvement JT 1.3 | CESAG</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--primary:#0a4ea1;
+--secondary:#0b6b3a;
+--success:#10b981;
+--danger:#ef4444;
+--bg:#f3f6fb;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+margin:0;
+}
+
+.card{
+background:white;
+width:100%;
+max-width:750px;
+padding:40px;
+border-radius:25px;
+box-shadow:0 30px 70px rgba(0,0,0,0.25);
+animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+h1{
+text-align:center;
+color:var(--primary);
+margin-bottom:5px;
+}
+
+.subtitle{
+text-align:center;
+color:#64748b;
+margin-bottom:30px;
+}
+
+input{
+padding:14px;
+border-radius:12px;
+border:2px solid #e2e8f0;
+width:100%;
+font-size:1rem;
+box-sizing:border-box;
+}
+
+.btn{
+background:var(--primary);
+color:white;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+transition:0.3s;
+width:100%;
+}
+
+.btn:hover{
+background:#083a7c;
+}
+
+#error{
+color:var(--danger);
+text-align:center;
+margin-top:10px;
+display:none;
+font-size:0.9rem;
+}
+
+#dashboard{display:none;}
+
+.header{
+border-bottom:1px solid #e5e7eb;
+padding-bottom:15px;
+margin-bottom:20px;
+}
+
+.progress-box{
+margin:25px 0;
+}
+
+.bar{
+height:14px;
+background:#e2e8f0;
+border-radius:10px;
+overflow:hidden;
+}
+
+.bar-fill{
+height:100%;
+background:var(--success);
+width:0%;
+transition:1.2s ease;
+}
+
+.badge100{
+background:var(--success);
+color:white;
+padding:4px 10px;
+border-radius:20px;
+font-size:0.75rem;
+margin-left:10px;
+}
+
+.module{
+margin-top:20px;
+border:1px solid #e5e7eb;
+border-radius:15px;
+overflow:hidden;
+}
+
+.module-head{
+background:#f8fafc;
+padding:12px 15px;
+font-weight:700;
+color:var(--primary);
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+padding:10px 15px;
+border-top:1px solid #f1f5f9;
+font-size:0.85rem;
+}
+
+.done{
+background:#d1fae5;
+color:#065f46;
+padding:3px 8px;
+border-radius:6px;
+font-weight:700;
+}
+
+.missing{
+background:#fee2e2;
+color:#991b1b;
+padding:3px 8px;
+border-radius:6px;
+font-weight:700;
+}
+
+.footer{
+margin-top:30px;
+text-align:center;
+font-size:0.75rem;
+color:#94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div id="login">
+<h1>Rapport d'Achèvement</h1>
+<p class="subtitle">JT 1.3 | CESAG 2025-2026</p>
+
+<input type="email" id="email" placeholder="Adresse email">
+<br><br>
+<input type="text" id="pwd" maxlength="4" style="text-transform:uppercase;" placeholder="Code à 4 lettres">
+<br><br>
+<button class="btn" onclick="login()">Se connecter</button>
+<p id="error">Email ou code incorrect.</p>
+</div>
+
+<div id="dashboard">
+
+<div class="header">
+<h2 id="name"></h2>
+<p id="emailDisplay" style="color:#64748b;"></p>
+</div>
+
+<div class="progress-box">
+<div style="display:flex;justify-content:space-between;font-weight:700;">
+<span>Taux d'achèvement</span>
+<span id="percent"></span>
+</div>
+<br>
+<div class="bar">
+<div class="bar-fill" id="bar"></div>
+</div>
+</div>
+
+<div id="modules"></div>
+
+<br>
+<button class="btn" style="background:#64748b;" onclick="location.reload()">Déconnexion</button>
+
+</div>
+
+<div class="footer">
+JOURNEES TECHNIQUES DECOFI 25-26 — Plateforme d'évaluation interne
+</div>
+
+</div>
+
+<!-- IMPORTANT : Fichier JS dans le même dossier -->
+<script src="students_dashboard_FINAL.js"></script>
+
+<script>
+function login(){
+const email=document.getElementById('email').value.toLowerCase().trim();
+const pwd=document.getElementById('pwd').value.toUpperCase().trim();
+
+if(typeof studentsData === "undefined"){
+alert("Le fichier JS n'est pas chargé.");
+return;
+}
+
+const user=studentsData.find(u=>u.e===email && u.p===pwd);
+
+if(!user){
+document.getElementById('error').style.display='block';
+return;
+}
+
+document.getElementById('login').style.display='none';
+document.getElementById('dashboard').style.display='block';
+
+document.getElementById('name').innerHTML=user.n +
+(user.t===100 ? '<span class="badge100">100% Validé</span>' : '');
+
+document.getElementById('emailDisplay').innerText=user.e;
+document.getElementById('percent').innerText=user.t + '%';
+
+setTimeout(()=>{
+document.getElementById('bar').style.width=user.t + '%';
+},200);
+
+let html="";
+for(let mod in user.details){
+html+=`<div class="module">
+<div class="module-head">${mod}</div>`;
+for(let act in user.details[mod]){
+html+=`<div class="item">
+<span>${act}</span>
+<span class="${user.details[mod][act]?'done':'missing'}">
+${user.details[mod][act]?'Terminé':'À faire'}
+</span>
+</div>`;
+}
+html+="</div>";
+}
+document.getElementById('modules').innerHTML=html;
+}
+</script>
+
+</body>
+</html>

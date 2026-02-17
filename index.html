@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi JT 1.3 | 2025-2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1e40af; --success: #10b981; --warning: #f59e0b; --bg: #f1f5f9; --text: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .card { background: white; width: 95%; max-width: 500px; padding: 2rem; border-radius: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem; text-align: center; }
+        .subtitle { font-size: 0.9rem; color: #64748b; text-align: center; margin-bottom: 2rem; }
+        .input-group { text-align: left; margin-bottom: 1rem; }
+        label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.4rem; }
+        input { width: 100%; padding: 0.8rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; font-size: 1rem; box-sizing: border-box; }
+        button { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+        #dashboard { display: none; text-align: left; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; text-align: center; }
+        .stat-card { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; }
+        .stat-val { display: block; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .missing-section { margin-top: 1.5rem; padding: 1rem; background: #fff7ed; border-radius: 0.75rem; border: 1px solid #ffedd5; }
+        .missing-title { font-weight: 700; color: #9a3412; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; }
+        .missing-item { font-size: 0.8rem; color: #7c2d12; margin-bottom: 0.3rem; padding-left: 1rem; position: relative; }
+        .missing-item::before { content: "•"; position: absolute; left: 0; color: var(--warning); }
+        .error { color: #ef4444; background: #fee2e2; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; margin-top: 1rem; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="login-view">
+    <h1>Rapport d'achèvement JT 1.3</h1>
+    <p class="subtitle">Session 2025-2026</p>
+    <div class="input-group"><label>Email</label><input type="email" id="email" placeholder="votre@email.com"></div>
+    <div class="input-group"><label>Code (4 lettres)</label><input type="text" id="pwd" maxlength="4" style="text-transform:uppercase"></div>
+    <button onclick="login()">Accéder à mes résultats</button>
+    <div class="error" id="err">Email ou code incorrect.</div>
+</div>
+
+<div class="card" id="dashboard">
+    <h2 id="u-name" style="margin:0; font-size: 1.25rem;"></h2>
+    <p id="u-email" style="color: #64748b; font-size: 0.85rem; margin: 0.2rem 0 1.5rem 0;"></p>
+    
+    <div class="stat-grid">
+        <div class="stat-card"><span class="stat-val" id="p-text">0%</span><span>Progression</span></div>
+        <div class="stat-card"><span class="stat-val" id="m-count">0</span><span>À compléter</span></div>
+    </div>
+
+    <div id="missing-box" class="missing-section" style="display:none;">
+        <div class="missing-title">⚠️ Activités à terminer :</div>
+        <div id="missing-list"></div>
+    </div>
+
+    <button onclick="location.reload()" style="background:#64748b; margin-top: 2rem;">Déconnexion</button>
+</div>
+
+<script>
+    // Données consolidées 
+    const db = [
+        {"n": "Yawovi honor ADJAH", "e": "honoresena16@gmail.com", "p": "MRSY", "t": 97, "m": ["MODULE 5 : QUIZZ 4"]},
+        {"n": "Essodokam ABABOHOU", "e": "abadoesso@gmail.com", "p": "ZJMW", "t": 100, "m": []},
+        {"n": "Mouhammad Al- Amine TOURE", "e": "alamine.toure@cec-alo.ci", "p": "JKRN", "t": 3, "m": ["Modules 1 à 5 - Divers QCM et Forums"]}
+        // Ajoutez ici le reste de la liste générée
+    ];
+
+    function login() {
+        const mail = document.getElementById('email').value.toLowerCase().trim();
+        const pass = document.getElementById('pwd').value.toUpperCase().trim();
+        const user = db.find(u => u.e === mail && u.p === pass);
+
+        if(user) {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('u-name').innerText = user.n;
+            document.getElementById('u-email').innerText = user.e;
+            document.getElementById('p-text').innerText = user.t + '%';
+            document.getElementById('m-count').innerText = user.m.length;
+
+            if(user.m.length > 0) {
+                const list = document.getElementById('missing-list');
+                list.innerHTML = user.m.map(item => `<div class="missing-item">${item}</div>`).join('');
+                document.getElementById('missing-box').style.display = 'block';
+            }
+        } else {
+            document.getElementById('err').style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>

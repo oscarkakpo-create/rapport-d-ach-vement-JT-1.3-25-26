@@ -3,71 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi JT 1.3 | Session 2025-2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Rapport d'Achèvement JT 1.3 | CESAG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1e40af; --success: #10b981; --warning: #f59e0b; --bg: #f8fafc; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: white; width: 95%; max-width: 500px; padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
-        h1 { font-size: 1.2rem; color: var(--primary); margin-bottom: 0.2rem; text-transform: uppercase; }
-        .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 2rem; font-weight: 600; }
-        input { width: 100%; padding: 0.8rem; border: 1.5px solid #e2e8f0; border-radius: 0.8rem; box-sizing: border-box; margin-bottom: 1rem; font-size: 1rem; }
-        button { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 0.8rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        :root { --primary: #1e3a8a; --accent: #3b82f6; --success: #10b981; --danger: #ef4444; --bg: #f1f5f9; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: white; width: 100%; max-width: 650px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #64748b; font-size: 0.9rem; margin-bottom: 30px; }
+        
+        /* Login Form */
+        .login-box { display: flex; flex-direction: column; gap: 15px; }
+        input { padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
+        .btn-login { background: var(--primary); color: white; padding: 15px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        
+        /* Dashboard */
         #dashboard { display: none; }
-        .prog-val { font-size: 3.5rem; font-weight: 800; color: var(--success); margin: 1rem 0; }
-        .missing-box { text-align: left; margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1rem; }
-        .m-title { font-weight: 700; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.8rem; }
-        .m-item { background: #fff7ed; color: #9a3412; padding: 0.6rem; border-radius: 0.5rem; margin-bottom: 0.4rem; font-size: 0.8rem; border-left: 4px solid var(--warning); }
-        .error { color: #ef4444; background: #fee2e2; padding: 0.8rem; border-radius: 0.6rem; font-size: 0.85rem; margin-top: 1rem; display: none; }
+        .header-info { border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; }
+        .progress-container { margin: 25px 0; text-align: center; }
+        .bar-bg { background: #e2e8f0; height: 14px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { background: var(--success); height: 100%; width: 0%; transition: 1.2s ease-in-out; }
+        
+        /* Modules & List */
+        .module-group { margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; }
+        .module-head { background: #f8fafc; padding: 12px 15px; font-weight: 700; color: var(--primary); border-bottom: 1px solid #e2e8f0; }
+        .item { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+        .item:last-child { border-bottom: none; }
+        .badge { font-weight: 700; padding: 3px 8px; border-radius: 5px; font-size: 0.7rem; text-transform: uppercase; }
+        .done { background: #d1fae5; color: #065f46; }
+        .missing { background: #fee2e2; color: #991b1b; }
+        
+        .error { color: var(--danger); text-align: center; font-size: 0.85rem; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="card" id="login-view">
-    <h1>Rapport d'achèvement d'activités</h1>
-    <p class="subtitle">JT 1.3 | SESSION 2025-2026</p>
-    <input type="email" id="email" placeholder="Email">
-    <input type="text" id="pwd" maxlength="4" style="text-transform:uppercase" placeholder="Code (4 lettres)">
-    <button onclick="login()">Se connecter</button>
-    <div class="error" id="err">Email ou code incorrect.</div>
-</div>
-
-<div class="card" id="dashboard">
-    <h2 id="u-name" style="margin:0; font-size: 1.3rem;"></h2>
-    <p id="u-email" style="color: #64748b; font-size: 0.85rem; margin: 0;"></p>
-    <div class="prog-val" id="p-text">0%</div>
-    <div id="m-area" class="missing-box">
-        <div class="m-title">Activités restant à valider :</div>
-        <div id="m-list"></div>
+<div class="card">
+    <div id="login-view">
+        <h1>Rapport d'Achèvement</h1>
+        <p class="subtitle">JT 1.3 | Session 2025-2026</p>
+        <div class="login-box">
+            <input type="email" id="email" placeholder="Email (ex: etudiant@gmail.com)">
+            <input type="text" id="pwd" maxlength="4" style="text-transform: uppercase;" placeholder="Code à 4 lettres">
+            <button class="btn-login" onclick="login()">Se connecter</button>
+            <p class="error" id="err">Email ou code incorrect.</p>
+        </div>
     </div>
-    <button onclick="location.reload()" style="background:#94a3b8; margin-top: 2rem;">Déconnexion</button>
-</div>
 
-<script src="db_clean_128.js"></script>
+    <div id="dashboard">
+        <div class="header-info">
+            <h2 id="u-name" style="margin:0; color: var(--primary);"></h2>
+            <p id="u-email" style="margin:5px 0; color:#64748b; font-size: 0.9rem;"></p>
+        </div>
+
+        <div class="progress-container">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700;">
+                <span>Taux d'achèvement</span>
+                <span id="p-percent" style="color:var(--success)">0%</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="p-bar"></div></div>
+        </div>
+
+        <div id="details-list"></div>
+        <button class="btn-login" onclick="location.reload()" style="background:#64748b; margin-top:30px;">Déconnexion</button>
+    </div>
+</div>
 
 <script>
-    function login() {
-        const mail = document.getElementById('email').value.toLowerCase().trim();
-        const pass = document.getElementById('pwd').value.toUpperCase().trim();
-        
-        // Recherche dans la variable 'db' contenue dans db_clean_128.js
-        const user = db.find(u => u.e === mail && u.p === pass);
+    // Exemple de structure pour les 128 étudiants 
+    const studentsData = [
+        {
+            "n": "Essodokam ABABOHOU",
+            "e": "abadoesso@gmail.com",
+            "p": "MYZH",
+            "t": 100,
+            "details": {
+                "Module 1": {"Forum 1": true, "QCM 1": true, "Cas Pratique 1": true},
+                "Module 5": {"Quizz 4": true}
+            }
+        },
+        {
+            "n": "Yawovi honor ADJAH",
+            "e": "honoresena16@gmail.com",
+            "p": "XROY",
+            "t": 97,
+            "details": {
+                "Module 1": {"Forum 1": true, "QCM 1": true},
+                "Module 5": {"Quizz 4": false, "Cas Pratique 3": true}
+            }
+        }
+    ];
 
-        if(user) {
+    function login() {
+        const emailInput = document.getElementById('email').value.toLowerCase().trim();
+        const pwdInput = document.getElementById('pwd').value.toUpperCase().trim();
+        const user = studentsData.find(s => s.e === emailInput && s.p === pwdInput);
+
+        if (user) {
             document.getElementById('login-view').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('u-name').innerText = user.n;
             document.getElementById('u-email').innerText = user.e;
-            document.getElementById('p-text').innerText = user.t + '%';
+            document.getElementById('p-percent').innerText = user.t + '%';
+            
+            setTimeout(() => { document.getElementById('p-bar').style.width = user.t + '%'; }, 200);
 
-            const list = document.getElementById('m-list');
-            if(user.m && user.m.length > 0) {
-                list.innerHTML = user.m.map(item => `<div class="m-item">${item}</div>`).join('');
-                document.getElementById('m-area').style.display = 'block';
-            } else {
-                list.innerHTML = '<div style="color:var(--success); font-weight:600;">Félicitations ! Toutes les activités sont terminées.</div>';
-                document.getElementById('m-area').style.display = 'block';
+            let detailsHtml = "";
+            for (let mod in user.details) {
+                detailsHtml += `<div class="module-group"><div class="module-head">${mod}</div>`;
+                for (let act in user.details[mod]) {
+                    const isDone = user.details[mod][act];
+                    detailsHtml += `
+                        <div class="item">
+                            <span>${act}</span>
+                            <span class="badge ${isDone ? 'done' : 'missing'}">${isDone ? 'Terminé' : 'À faire'}</span>
+                        </div>`;
+                }
+                detailsHtml += `</div>`;
             }
+            document.getElementById('details-list').innerHTML = detailsHtml;
         } else {
             document.getElementById('err').style.display = 'block';
         }
